@@ -6,15 +6,15 @@ $ep_requests = new EP_Requests;
         <div class="ep-main-container ep-position-relative ep-box-wrap">
             <?php do_action( 'ep_before_single_event_contant');?>
             <?php
-		    // Load icon template
-            $icons_file_path = $ep_requests->eventprime_get_ep_theme('event/icons');
-            include $icons_file_path;
             // Load image template
             $image_file_path = $ep_requests->eventprime_get_ep_theme('event/image');
             include $image_file_path;
 			// Load title template
              $title_file_path = $ep_requests->eventprime_get_ep_theme('event/title');
              include $title_file_path;
+             		    // Load icon template
+            $icons_file_path = $ep_requests->eventprime_get_ep_theme('event/icons');
+            include $icons_file_path;
 			// Load date time template
              $datetime_file_path = $ep_requests->eventprime_get_ep_theme('event/date-time');
              include $datetime_file_path;
