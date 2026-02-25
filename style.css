@@ -1,0 +1,274 @@
+/**
+Theme Name: ORAS Theme
+Author: Paul Rocco
+Author URI: https://oras.org
+Description: Astra child theme for ORAS with glassmorphism + stable starfield + Elementor sticky overlay header.
+Version: 1.2.0
+Template: astra
+*/
+
+/* ==========================================================
+   0) BASICS
+========================================================== */
+
+html,
+body {
+  background: transparent !important;
+}
+
+/* Hide front-end page titles (do not affect admin) */
+body:not(.wp-admin) .page .entry-title {
+  display: none;
+}
+
+/* ==========================================================
+   1) STARFIELD / NEBULA (background layer)
+========================================================== */
+
+body:not(.wp-admin) #nebula-canvas,
+body:not(.wp-admin) #star-canvas {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
+  z-index: 0 !important; /* background layer */
+}
+
+/* Mobile: hide starfield */
+@media only screen and (max-width: 1024px) {
+  body:not(.wp-admin) #nebula-canvas,
+  body:not(.wp-admin) #star-canvas {
+    display: none !important;
+  }
+
+  body:not(.wp-admin),
+  html:not(.wp-admin) {
+    background: #01010a !important;
+  }
+}
+
+/* ==========================================================
+   2) CONTENT STACKING (site above canvases)
+========================================================== */
+
+#page,
+.site,
+.ast-site,
+.site-content,
+#content,
+#content > .ast-container,
+main,
+footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Keep content layers transparent so the starfield shows through */
+body:not(.wp-admin) #page,
+body:not(.wp-admin) .site,
+body:not(.wp-admin) .ast-site,
+body:not(.wp-admin) .site-content,
+body:not(.wp-admin) #content,
+body:not(.wp-admin) #content > .ast-container,
+body:not(.wp-admin) .elementor-section,
+body:not(.wp-admin) .elementor-container {
+  background: transparent !important;
+}
+
+/* ==========================================================
+   3) ELEMENTOR HEADER (overlay + sticky)
+   Transparent at top → black when sticky activates
+========================================================== */
+
+/* Make header overlay the page (so hero/video can sit behind it) */
+header.elementor-location-header {
+  position: fixed !important;      /* overlay (not in normal flow) */
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 10000 !important;
+  background: transparent !important;
+  transition: background-color 0.25s ease, backdrop-filter 0.25s ease;
+  -webkit-transition: background-color 0.25s ease, -webkit-backdrop-filter 0.25s ease;
+}
+
+/* Elementor sticky state classes (Elementor uses one or both depending on config) */
+header.elementor-location-header.elementor-sticky--active,
+header.elementor-location-header.elementor-sticky--effects {
+  background: rgba(0, 0, 0, 0.92) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Ensure header/menu text stays readable */
+header.elementor-location-header a,
+header.elementor-location-header .elementor-nav-menu a {
+  color: #ffffff;
+}
+
+header.elementor-location-header,
+header.elementor-location-header * {
+  pointer-events: auto;
+}
+
+/* IMPORTANT:
+   Because header is fixed, Elementor/Astra sometimes adds top padding to the content
+   to “make room” for it. We do NOT want that on the home hero.
+*/
+body.home #content,
+body.home .site-content,
+body.home #content > .ast-container {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* ==========================================================
+   4) HOME HERO: start at very top behind header
+   - Pull first Elementor section up if theme adds an offset
+   - Add top padding to the *hero content* so it isn't hidden
+========================================================== */
+
+/* Force the first Elementor section to reach the top of viewport */
+body.home #content .elementor .elementor-top-section:first-of-type {
+  margin-top: 0 !important;
+}
+
+/* Some setups still push the first section down with a translate/offset.
+   This pulls it back up behind the fixed header.
+   (Adjust --oras-header-h if your header height differs.)
+*/
+body.home {
+  --oras-header-h: 80px;
+}
+
+/* Pull the hero background up behind the fixed header */
+body.home #content .elementor .elementor-top-section:first-of-type {
+  transform: translateY(calc(var(--oras-header-h) * -1)) !important;
+}
+
+/* But keep the hero's INNER content readable below the header */
+body.home #content .elementor .elementor-top-section:first-of-type > .elementor-container {
+  padding-top: var(--oras-header-h) !important;
+}
+
+/* ==========================================================
+   5) HEADER LOGIN / USER DROPDOWN
+========================================================== */
+
+.oras-user-menu {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 10px;
+}
+
+.oras-login-btn {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 500;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.oras-login-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.oras-user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 10px;
+  min-width: 180px;
+  background: rgba(20, 20, 30, 0.85);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 20000;
+  overflow: hidden;
+}
+
+.oras-user-dropdown a {
+  display: block;
+  padding: 12px 16px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.oras-user-dropdown a:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.oras-user-menu:hover .oras-user-dropdown,
+.oras-user-dropdown:hover {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* ==========================================================
+   6) WooCommerce spacing
+========================================================== */
+
+body:not(.wp-admin).woocommerce-page #primary,
+body:not(.wp-admin).woocommerce-page .site-main,
+body:not(.wp-admin).woocommerce-page .woocommerce {
+  padding-top: 40px;
+}
+
+/* ==========================================================
+   7) PMPro fixes (dark-mode safe)
+========================================================== */
+
+.pmpro_form_label,
+.pmpro_form_label *,
+.pmpro_card label,
+.pmpro_form_field label {
+  color: inherit !important;
+}
+
+.pmpro_card {
+  color: #ffffff;
+}
+
+#pmpro_form_fieldset-more-information .pmpro_form_fields {
+  display: flex !important;
+  flex-direction: column !important;
+  row-gap: 28px !important;
+}
+
+#pmpro_form_fieldset-more-information .pmpro_form_label {
+  margin-bottom: 10px !important;
+  display: block;
+}
+
+#pmpro_form_fieldset-more-information .pmpro_form_hint {
+  margin-top: 10px !important;
+}
+
+#pmpro_form_fieldset-more-information .pmpro_list_item {
+  margin: 10px 0 !important;
+}
+
+#pmpro_form_fieldset-more-information .pmpro_form_field-radio-item {
+  margin: 8px 0 !important;
+}
